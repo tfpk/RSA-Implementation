@@ -2,15 +2,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 
-int quiet; // if true, don't print 
-
+#define MAX_MSG_LEN      120
+#define MAX_MSG_LEN_STR "120"
 void PRINT_INFO(){
     printf("RSA System\nDesigned by @tfpk\nNOTE: IMPLEMENTATION NOT INTENDED FOR SECURITY\n\n");
 }
 
 int main(int argc, char** argv){
-    char opt, mode, filename[100], message[64];
+    char opt, mode, filename[100], message[MAX_MSG_LEN];
 
     if (argc == 0){
         printf("ERROR: Program requires filename and instruction.\n");
@@ -47,8 +48,8 @@ int main(int argc, char** argv){
             if(!quiet) printf("Files Created Successfully.\n");
             break;
         case 'e': // encrypt
-            if (!quiet) printf("message (max. 64 bytes): ");
-            scanf("%64s", message);
+            if (!quiet) printf("message (" MAX_MSG_LEN_STR "B maximum): ");
+            scanf("%" MAX_MSG_LEN_STR  "s", message);
             encrypt(filename, message);
             break;
         case 'd': // decrypt
