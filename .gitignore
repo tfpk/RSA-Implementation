@@ -1,0 +1,6 @@
+# Object Files
+*.o
+
+# Executables
+rsa
+rsatest
