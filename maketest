@@ -1,0 +1,15 @@
+CXX = gcc
+OBJS = rsa_math.o create_keys.o tests/alltests.o tests/CuTest.o tests/T_rsa_math.o
+CFLAGS = -Wall -g -c -I tests
+LFLAGS = -Wall -g -I tests
+
+rsatest: $(OBJS)
+	$(CXX) $(LFLAGS) $(OBJS) -lgmp -o rsatest
+
+
+%.o: %.c
+	$(CXX) $(CFLAGS)  -c $< -o $@
+
+.PHONY: clean
+clean:
+	rm -f $(OBJS) rsatest
