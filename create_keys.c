@@ -1,4 +1,5 @@
 #include "rsa.h"
+#include "rsa_math.h"
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,6 +9,7 @@
 #define MIN_LENGTH 128*8
 
 #define PUBLIC_EXPONENT 0x10001
+
 
 // fill `r` with random bits until it is MIN_LENGTH long
 void fill_random(mpz_t r){
@@ -21,6 +23,33 @@ void fill_random(mpz_t r){
         mpz_mul_2exp(r, r, 8); // bitshift left 8 bits
         mpz_add_ui(r, r, rand_num);
     }
+}
+
+// increases the test number until it is prime
+void rsa_prime_inc(mpz_t test){
+    mpz_t result;
+    mpz_init(result);
+    if (mpz_even_p(test)) mpz_add_ui(test, test, 1); //must be odd
+    
+    if (!rsa_prime_test(test)){ // not a prime
+        mpz_add_ui(test, test, 2);
+        rsa_prime_inc(test);
+    }
+    mpz_clear(result);
+}
+
+// wrapper find gcd(a - 1, b - 1) so that a, b are effectively being passed by value.
+void rsa_gcd_dcrmt(mpz_t r, mpz_t a, mpz_t b){
+    mpz_t a_temp, b_temp;
+    mpz_init_set(a_temp, a);
+    mpz_init_set(b_temp, b);
+    mpz_sub_ui(a_temp, a_temp, 1);
+    mpz_sub_ui(b_temp, b_temp, 1);
+    // call with temporary values to be modified
+    euclid_gcd(a_temp, b_temp);
+    
+    mpz_set(r, a_temp);
+    mpz_clears(a_temp, b_temp, NULL);
 }
 
 // write keys to file

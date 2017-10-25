@@ -1,3 +1,4 @@
+#include "rsa_math.h"
 #include "rsa.h"
 #include <stdio.h>
 #include "gmp.h"
@@ -81,29 +82,16 @@ void euclid_gcd(mpz_t a, mpz_t b){
         euclid_gcd(a, b);
     } 
 }
+#define NUM_PRIMES 10
 
-// wrapper find gcd(a - 1, b - 1) so that a, b are effectively being passed by value.
-void rsa_gcd_dcrmt(mpz_t r, mpz_t a, mpz_t b){
-    mpz_t a_temp, b_temp;
-    mpz_init_set(a_temp, a);
-    mpz_init_set(b_temp, b);
-    mpz_sub_ui(a_temp, a_temp, 1);
-    mpz_sub_ui(b_temp, b_temp, 1);
-    // call with temporary values to be modified
-    euclid_gcd(a_temp, b_temp);
-    
-    mpz_set(r, a_temp);
-    mpz_clears(a_temp, b_temp, NULL);
-}
-
-int PRIMES[10] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29}; 
+int PRIMES[NUM_PRIMES] = {2, 3, 5, 7, 11, 13, 17, 19, 23, 29}; 
 
 int rsa_prime_test(mpz_t test){
     int i, return_val;
     mpz_t prime, test_dcrmt, result;
     mpz_inits(prime, test_dcrmt, result, NULL);
     return_val = 1;
-    for (i = 0; i < 10; i ++){
+    for (i = 0; i < NUM_PRIMES; i ++){
         mpz_set_ui(prime, PRIMES[i]);
         mpz_set(test_dcrmt, test);
         mpz_sub_ui(test_dcrmt, test_dcrmt, 1);
@@ -113,16 +101,3 @@ int rsa_prime_test(mpz_t test){
     mpz_clears(prime, test_dcrmt, result, NULL);
     return return_val;
 }
-
-void rsa_prime_inc(mpz_t test){
-    mpz_t result;
-    mpz_init(result);
-    if (mpz_even_p(test)) mpz_add_ui(test, test, 1); //must be odd
-    
-    if (!rsa_prime_test(test)){ // not a prime
-        mpz_add_ui(test, test, 2);
-        rsa_prime_inc(test);
-    }
-    mpz_clear(result);
-}
-

@@ -1,4 +1,5 @@
 #include "../rsa.h"
+#include "../rsa_math.h"
 #include "rsa_test.h"
 #include <stdio.h>
 #include "gmp.h"
